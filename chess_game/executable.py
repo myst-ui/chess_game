@@ -1,27 +1,49 @@
 from board import *
+import time
 
 
-
-def main(file):
+def main(file="histo.txt",unicode = True,fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w 1",crono = 10,load_f =None):
     run = True
-    team = 'w'
-    turn_count = 1
-    board_init()
-
+    wcrono = int(crono*60)
+    bcrono = int(crono*60)
+    # team = 'w'
+    # turn_count = 1
+    team , turn_count = load_fen(fen)
+    turn_count = int(turn_count)
+    print_board(unicode=unicode)
     while run :
-        
-        game_turn(team)
+        print(f"white crono : {wcrono//60}m{wcrono%60:.0f}s\nblack crono : {bcrono//60:}m{bcrono%60:.0f}s")
+        try:
+            start = time.time()
+            r = game_turn(team)
+            end = time.time()
+        except EOFError:
+            print("au revoir")
+            break
+        if r is not None:
+            print(r)
+            break
         turn_count+=1
-        team = 'w'
-        if turn_count%2==0:
+        if team =='w':
+            wcrono-=(end-start+2)
             team = 'b'
+        else:
+            bcrono-=(end-start+2)
+            team = 'w'
 
-        if is_victory():
+        if bcrono <= 0 | wcrono <=0 :
+            print(team+" player win by timeout")
             run = False
+        print_board(unicode=unicode)
+        if is_checkmate(team):
+            run = False
+        # print (Pieces.list_mv)
+    save_histo(file)
+    
 
 
 
-main(1)
+main()
 
 
 # board_init()

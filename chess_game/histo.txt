@@ -1,0 +1,2 @@
+pos_d pos_a prise
+e2    e4    -
